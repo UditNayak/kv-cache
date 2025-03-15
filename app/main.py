@@ -1,10 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from app.lru_cache import LRUCache
 
 app = FastAPI()
 
-# In-memory key-value cache
-cache = {}
+CACHE_CAPACITY = 5 
+cache = LRUCache(CACHE_CAPACITY)
 
 class KeyValuePair(BaseModel):
     key: str
@@ -14,14 +15,15 @@ class KeyValuePair(BaseModel):
 def put_item(item: KeyValuePair):
     if len(item.key) > 256 or len(item.value) > 256:
         raise HTTPException(status_code=400, detail="Key or value exceeds 256 characters")
-    cache[item.key] = item.value
+    cache.put(item.key, item.value)
     return {"status": "OK", "message": "Key inserted/updated successfully."}
 
 @app.get("/get")
 def get_item(key: str):
     try:
-        if key in cache:
-            return {"status": "OK", "key": key, "value": cache[key]}
-        return {"status": "ERROR", "message": "Key not found."}
+        value = cache.get(key)
+        if value is None:
+            return {"status": "ERROR", "message": "Key not found."}
+        return {"status": "OK", "key": key, "value": value}
     except Exception as e:
-        return {"status": "ERROR", "message": f"Error: {str(e)}"}
+        return {"status": "ERROR", "message": str(e)}
