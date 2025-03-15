@@ -12,6 +12,7 @@ The service is containerized using Docker and runs on port **7171**.
 kv-cache/
 ├── app/
 │   ├── main.py
+│   ├── lru_cache.py
 ├── images/
 ├── Dockerfile
 ├── requirements.txt
@@ -66,9 +67,10 @@ curl --location 'http://localhost:7171/get?key=Udit'
 
 
 ### To-Do:
-- Implement Cache Eviction (LRU).
+- Ensures 0% cache miss unless memory usage exceeds 70%.
 - Use Loose Coupling for Cache Eviction to allow easy future changes (Open/Closed Principle).
 - Optimize for high concurrency (Use Locks).
 - Use Multithreading for low latency.
 - Implement Docker Live Reload for faster development.
 - Create a separate folder for schemas (request + response) [Better folder structure].
+- Implement a load Tester.
