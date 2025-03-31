@@ -4,8 +4,7 @@ from app.lru_cache import LRUCache
 
 app = FastAPI()
 
-CACHE_CAPACITY = 5 
-cache = LRUCache(CACHE_CAPACITY)
+cache = LRUCache()
 
 class KeyValuePair(BaseModel):
     key: str
@@ -14,8 +13,11 @@ class KeyValuePair(BaseModel):
 @app.post("/put")
 def put_item(item: KeyValuePair):
     if len(item.key) > 256 or len(item.value) > 256:
-        raise HTTPException(status_code=400, detail="Key or value exceeds 256 characters")
-    cache.put(item.key, item.value)
+        return {"status": "ERROR", "message": "Key or value exceeds 256 characters."}
+    try:
+        cache.put(item.key, item.value)
+    except Exception as e:
+        return {"status": "ERROR", "message": str(e)}
     return {"status": "OK", "message": "Key inserted/updated successfully."}
 
 @app.get("/get")

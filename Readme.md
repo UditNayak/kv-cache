@@ -53,6 +53,14 @@ curl --location 'http://localhost:7171/put' \
 - **Example Response:**
 ![Post API](./images/post_api.png)
 
+If the length of `key` or `value` exceeds 256 characters:
+```
+{
+    "status": "ERROR",
+    "message": "Key or value exceeds 256 characters."
+}
+```
+
 ### 2. Get a Value by Key
 - **Endpoint:** `GET /get`
 - **Query Parameter:** `key`
@@ -65,12 +73,3 @@ curl --location 'http://localhost:7171/get?key=Udit'
 #### Cache-Miss
 ![Cache Miss](./images/cache_miss.png)
 
-
-### To-Do:
-- Ensures 0% cache miss unless memory usage exceeds 70%.
-- Use Loose Coupling for Cache Eviction to allow easy future changes (Open/Closed Principle).
-- Optimize for high concurrency (Use Locks).
-- Use Multithreading for low latency.
-- Implement Docker Live Reload for faster development.
-- Create a separate folder for schemas (request + response) [Better folder structure].
-- Implement a load Tester.
