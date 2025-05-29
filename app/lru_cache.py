@@ -13,17 +13,16 @@ class LRUCache:
         return self.cache[key]
 
     def put(self, key: str, value: str):
-        if key in self.cache:
-            self.cache.move_to_end(key) # Update value and move to end
-        else:
-            self.cache[key] = value
-
+        self.cache[key] = value  # Assign/update value
+        self.cache.move_to_end(key)  # Move to end as most recently used
         self._evict_if_needed()
 
     def _evict_if_needed(self):
         while self._is_memory_exceeded():
             if self.cache:
                 self.cache.popitem(last=False)  # Evict the least recently used item
+            else:
+                break
 
     def _is_memory_exceeded(self):
         memory_info = psutil.virtual_memory()
